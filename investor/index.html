@@ -1,0 +1,1595 @@
+<!DOCTYPE css>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MATAAI NIGERIA LIMITED — Freight Forwarding & Logistics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --navy:     #0B3C5D;
+  --navy-deep:#071f31;
+  --blue:     #1D70A2;
+  --orange:   #F57C00;
+  --orange-lt:#FF9D3A;
+  --dark:     #2E2E2E;
+  --mid:      #6B7280;
+  --light:    #F3F4F6;
+  --white:    #FFFFFF;
+  --green:    #16A34A;
+  --yellow:   #FACC15;
+  --red:      #DC2626;
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--dark);
+  background: var(--white);
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ─────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--navy-deep); }
+::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 10px; }
+
+/* ── NAV ────────────────────────────────────── */
+nav {
+  position: fixed; top:0; left:0; right:0; z-index:999;
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 4rem;
+  height: 72px;
+  background: rgba(7,31,49,0.97);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(245,124,0,0.3);
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 1px;
+  text-decoration:none;
+  display:flex; align-items:center; gap:0.75rem;
+}
+.logo-mark {
+  width:32px; height:32px;
+  background: var(--orange);
+  clip-path: polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+}
+
+.nav-links {
+  display:flex; gap:2.5rem; list-style:none;
+}
+.nav-links a {
+  color: rgba(255,255,255,0.75);
+  text-decoration:none;
+  font-size:0.9rem;
+  font-weight:500;
+  letter-spacing:0.3px;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a:hover { color: var(--orange); }
+
+.nav-cta {
+  background: var(--orange);
+  color: var(--white) !important;
+  padding: 0.55rem 1.4rem;
+  border-radius: 4px;
+  font-weight:600 !important;
+  transition: background 0.2s !important;
+}
+.nav-cta:hover { background: var(--orange-lt) !important; color: var(--white) !important; }
+
+.hamburger {
+  display:none; flex-direction:column; gap:5px;
+  background:none; border:none; cursor:pointer; padding:4px;
+}
+.hamburger span {
+  display:block; width:24px; height:2px; background:var(--white);
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+
+/* ── HERO VIDEO BACKGROUND ──────────────────── */
+.hero-video-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.45;
+  pointer-events: none;
+}
+.hero-video-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(7,31,49,0.82) 0%,
+    rgba(11,60,93,0.65) 50%,
+    rgba(7,31,49,0.80) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── HERO ───────────────────────────────────── */
+.hero {
+  min-height: 100vh;
+  position: relative;
+  display:flex; align-items:center;
+  overflow:hidden;
+  padding-top: 72px;
+}
+
+.hero-bg-lines {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(90deg, rgba(29,112,162,0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(29,112,162,0.08) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.hero-glow {
+  position:absolute;
+  width:700px; height:700px;
+  background: radial-gradient(circle, rgba(245,124,0,0.12) 0%, transparent 60%);
+  top:-200px; right:-200px;
+  pointer-events:none;
+}
+.hero-glow2 {
+  position:absolute;
+  width:500px; height:500px;
+  background: radial-gradient(circle, rgba(29,112,162,0.15) 0%, transparent 60%);
+  bottom:-100px; left:-100px;
+  pointer-events:none;
+}
+
+.hero-inner {
+  position:relative; z-index:1;
+  max-width:1280px; margin:0 auto;
+  padding: 6rem 4rem;
+  display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center;
+}
+
+.hero-eyebrow {
+  display:inline-block;
+  font-size:0.78rem; font-weight:600; letter-spacing:3px; text-transform:uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(245,124,0,0.4);
+  padding:0.35rem 0.9rem; border-radius:2px;
+  margin-bottom:1.5rem;
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.8rem, 5vw, 4.5rem);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.08;
+  margin-bottom: 1.5rem;
+}
+.hero h1 em {
+  font-style: italic;
+  color: var(--orange);
+}
+
+.hero-desc {
+  font-size: 1.1rem;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 480px;
+  font-weight:300;
+}
+
+.hero-actions {
+  display:flex; gap:1rem; flex-wrap:wrap;
+}
+
+.btn {
+  display:inline-flex; align-items:center; gap:0.5rem;
+  padding:0.85rem 2rem; border-radius:4px;
+  font-family:var(--font-body); font-weight:600; font-size:0.95rem;
+  text-decoration:none; cursor:pointer; border:none;
+  transition: all 0.25s;
+}
+.btn-orange {
+  background: var(--orange); color:var(--white);
+  box-shadow: 0 8px 24px rgba(245,124,0,0.28);
+}
+.btn-orange:hover {
+  background: var(--orange-lt);
+  box-shadow: 0 12px 32px rgba(245,124,0,0.38);
+  transform: translateY(-2px);
+}
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid rgba(255,255,255,0.35);
+}
+.btn-outline:hover {
+  border-color: var(--white);
+  background: rgba(255,255,255,0.05);
+}
+
+.hero-stats {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;
+}
+
+.stat-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  padding: 2rem 1.5rem;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.stat-card:hover {
+  border-color: rgba(245,124,0,0.4);
+  transform: translateY(-4px);
+}
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 2.8rem; font-weight:700;
+  color: var(--orange);
+  line-height:1;
+  margin-bottom:0.4rem;
+}
+.stat-label {
+  font-size:0.85rem; color:rgba(255,255,255,0.55); font-weight:400;
+}
+
+/* ── CONTACT BAR ──────────────────────────── */
+.contact-bar {
+  background: var(--orange);
+  padding: 0;
+}
+.contact-bar-inner {
+  max-width:1280px; margin:0 auto;
+  display:flex; justify-content:center;
+  flex-wrap:wrap;
+  border-left: none;
+}
+.cb-item {
+  display:flex; align-items:center; gap:1rem;
+  padding: 1.25rem 3rem;
+  color:var(--white);
+  text-decoration:none;
+  border-right: 1px solid rgba(255,255,255,0.2);
+  transition: background 0.2s;
+}
+.cb-item:first-child { border-left: 1px solid rgba(255,255,255,0.2); }
+.cb-item:hover { background: rgba(0,0,0,0.08); }
+.cb-item-label { font-size:0.75rem; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; opacity:0.8; }
+.cb-item-value { font-size:1rem; font-weight:700; margin-top:0.1rem; }
+
+/* ── SECTION SHARED ──────────────────────── */
+section { padding: 7rem 4rem; }
+.section-inner { max-width:1280px; margin:0 auto; }
+
+.section-label {
+  font-size:0.75rem; font-weight:700; letter-spacing:3px; text-transform:uppercase;
+  color:var(--orange); margin-bottom:0.75rem;
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight:700; color:var(--dark);
+  line-height:1.15; margin-bottom:1rem;
+}
+.section-sub {
+  font-size:1.05rem; color:var(--mid); max-width:560px; line-height:1.75;
+}
+
+/* ── SERVICES ─────────────────────────────── */
+.services-section { background: var(--white); }
+
+.services-layout {
+  display:grid; grid-template-columns:1fr 2.5fr; gap:5rem; align-items:start;
+  margin-top:4rem;
+}
+.services-intro p {
+  font-size:1rem; color:var(--mid); line-height:1.8; margin-top:1.5rem; margin-bottom:2rem;
+}
+
+.services-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:1.5px;
+  background: var(--light);
+  border:1.5px solid var(--light);
+  border-radius:12px; overflow:hidden;
+}
+.service-card {
+  background:var(--white);
+  padding:2.5rem;
+  transition: background 0.3s, transform 0.3s;
+  cursor:default;
+}
+.service-card:hover {
+  background: var(--navy-deep);
+}
+.service-card:hover .sc-title,
+.service-card:hover .sc-features li { color:var(--white); }
+.service-card:hover .sc-desc { color:rgba(255,255,255,0.6); }
+.service-card:hover .sc-num { color: var(--orange); }
+
+.sc-num {
+  font-family: var(--font-display);
+  font-size:2.5rem; font-weight:700;
+  color: var(--light); line-height:1;
+  margin-bottom:1rem;
+  transition: color 0.3s;
+}
+.sc-title {
+  font-family:var(--font-display);
+  font-size:1.3rem; font-weight:700;
+  color:var(--dark); margin-bottom:0.75rem;
+  transition: color 0.3s;
+}
+.sc-desc {
+  font-size:0.9rem; color:var(--mid); line-height:1.7; margin-bottom:1.25rem;
+  transition: color 0.3s;
+}
+.sc-features {
+  list-style:none; display:flex; flex-direction:column; gap:0.4rem;
+}
+.sc-features li {
+  font-size:0.85rem; color:var(--mid);
+  padding-left:1rem; position:relative;
+  transition: color 0.3s;
+}
+.sc-features li::before {
+  content:'—'; position:absolute; left:0; color:var(--orange); font-size:0.75rem;
+}
+
+/* ── INDUSTRIES ───────────────────────────── */
+.industries-section { background: var(--light); }
+
+.industries-grid {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:1.5rem; margin-top:4rem;
+}
+.industry-card {
+  background:var(--white);
+  border-radius:10px; padding:2rem 1.5rem;
+  border:1.5px solid transparent;
+  transition: all 0.3s;
+  cursor:default;
+}
+.industry-card:hover {
+  border-color: var(--orange);
+  transform: translateY(-6px);
+  box-shadow: 0 16px 40px rgba(11,60,93,0.1);
+}
+.ic-name {
+  font-family:var(--font-display);
+  font-size:1.1rem; font-weight:700;
+  color:var(--dark); margin-bottom:0.5rem;
+}
+.ic-desc { font-size:0.85rem; color:var(--mid); line-height:1.6; }
+
+/* ── QUOTE ──────────────────────────────────── */
+.quote-section {
+  background: var(--navy);
+  position:relative; overflow:hidden;
+}
+.quote-section::before {
+  content:'';
+  position:absolute; top:0; right:0; width:50%; height:100%;
+  background: linear-gradient(135deg, transparent, rgba(245,124,0,0.05));
+  pointer-events:none;
+}
+
+.quote-layout {
+  display:grid; grid-template-columns:1fr 1.5fr; gap:6rem; align-items:start;
+}
+
+.quote-left .section-title { color:var(--white); }
+.quote-left .section-sub { color:rgba(255,255,255,0.6); }
+
+.quote-steps { margin-top:3rem; display:flex; flex-direction:column; gap:1.5rem; }
+.qs-item {
+  display:flex; gap:1.2rem; align-items:flex-start;
+}
+.qs-num {
+  font-family:var(--font-display);
+  font-size:1.3rem; font-weight:700; color:var(--orange);
+  min-width:2rem; padding-top:2px;
+}
+.qs-text strong {
+  display:block; font-size:0.95rem; color:var(--white); margin-bottom:0.2rem;
+}
+.qs-text span { font-size:0.85rem; color:rgba(255,255,255,0.5); }
+
+.quote-form {
+  background: rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:3rem;
+  backdrop-filter: blur(10px);
+}
+
+.quote-form h3 {
+  font-family:var(--font-display);
+  font-size:1.5rem; color:var(--white);
+  margin-bottom:2rem; font-weight:700;
+}
+
+/* Stepper */
+.stepper { display:flex; gap:0; margin-bottom:2.5rem; }
+.step-dot {
+  flex:1; text-align:center; padding-bottom:0.75rem;
+  border-bottom:2px solid rgba(255,255,255,0.15);
+  font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.4);
+  position:relative; transition: all 0.3s; cursor:default;
+}
+.step-dot.active {
+  border-color: var(--orange); color:var(--orange);
+}
+.step-dot.done {
+  border-color: var(--green); color:var(--green);
+}
+
+.form-step { display:none; }
+.form-step.active { display:block; animation: fadeUp 0.4s ease-out; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(12px);} to{opacity:1;transform:translateY(0);} }
+
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+.form-group { display:flex; flex-direction:column; gap:0.4rem; margin-bottom:1rem; }
+.form-group label {
+  font-size:0.8rem; font-weight:600; letter-spacing:0.3px; text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding:0.9rem 1rem;
+  background: rgba(255,255,255,0.07);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:6px;
+  color:var(--white);
+  font-family:var(--font-body); font-size:0.95rem;
+  transition: border-color 0.2s;
+}
+.form-group input::placeholder { color:rgba(255,255,255,0.3); }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline:none; border-color:var(--orange);
+}
+.form-group select option { background:var(--navy-deep); color:var(--white); }
+.form-group textarea { resize:vertical; min-height:100px; }
+
+.upload-zone {
+  border:2px dashed rgba(255,255,255,0.2);
+  border-radius:8px; padding:2rem; text-align:center;
+  cursor:pointer; transition: all 0.2s; margin-bottom:1rem;
+}
+.upload-zone:hover { border-color:var(--orange); background:rgba(245,124,0,0.05); }
+.upload-zone input { display:none; }
+.upload-zone label { color:rgba(255,255,255,0.5); font-size:0.9rem; cursor:pointer; }
+.upload-zone label strong { color:var(--orange); }
+
+.form-nav { display:flex; justify-content:space-between; gap:1rem; margin-top:1.5rem; }
+.btn-ghost {
+  background:transparent; border:1.5px solid rgba(255,255,255,0.25); color:var(--white);
+}
+.btn-ghost:hover { border-color:rgba(255,255,255,0.6); }
+
+/* ── TRACK ──────────────────────────────────── */
+.track-section { background: var(--white); }
+
+.track-layout {
+  display:grid; grid-template-columns:1fr 1fr; gap:5rem; margin-top:4rem; align-items:start;
+}
+
+.track-input-group {
+  display:flex; gap:0.75rem; margin-top:2rem; margin-bottom:2rem;
+}
+.track-input-group input {
+  flex:1; padding:1rem 1.25rem;
+  border:2px solid var(--light);
+  border-radius:6px; font-family:var(--font-body); font-size:1rem;
+  transition: border-color 0.2s;
+}
+.track-input-group input:focus { outline:none; border-color:var(--navy); }
+
+/* Timeline */
+.timeline { position:relative; padding-left:2rem; margin-top:1rem; }
+.timeline::before {
+  content:''; position:absolute; left:6px; top:0; bottom:0;
+  width:2px; background:var(--light);
+}
+.tl-item {
+  position:relative; padding:0 0 2.5rem 2rem;
+}
+.tl-dot {
+  position:absolute; left:-1.9rem; top:3px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--light); border:2px solid var(--white);
+  box-shadow:0 0 0 2px var(--light);
+  transition: all 0.3s;
+}
+.tl-item.done .tl-dot { background:var(--green); box-shadow:0 0 0 2px var(--green); }
+.tl-item.active .tl-dot {
+  background:var(--orange); box-shadow:0 0 0 3px rgba(245,124,0,0.25);
+  animation: ring 2s infinite;
+}
+@keyframes ring { 0%,100%{box-shadow:0 0 0 3px rgba(245,124,0,0.25);} 50%{box-shadow:0 0 0 6px rgba(245,124,0,0.12);} }
+
+.tl-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; }
+.tl-status { font-weight:700; font-size:0.95rem; color:var(--dark); }
+.tl-date { font-size:0.8rem; color:var(--mid); font-family:monospace; }
+.tl-item.active .tl-status { color:var(--orange); }
+.tl-desc { font-size:0.85rem; color:var(--mid); line-height:1.6; }
+.tl-badge {
+  display:inline-block; margin-top:0.5rem;
+  padding:0.25rem 0.75rem; border-radius:20px; font-size:0.75rem; font-weight:600;
+}
+.badge-done { background:rgba(22,163,74,0.1); color:var(--green); }
+.badge-active { background:rgba(245,124,0,0.1); color:var(--orange); }
+.badge-pending { background:var(--light); color:var(--mid); }
+
+/* ── LIVE MAP ──────────────────────────────── */
+.map-col { position:sticky; top:100px; }
+
+.map-card {
+  background:var(--white);
+  border-radius:14px; overflow:hidden;
+  box-shadow:0 20px 60px rgba(11,60,93,0.12);
+  border:1.5px solid var(--light);
+  display:none;
+}
+.map-card.visible { display:block; animation: fadeUp 0.5s ease-out; }
+
+.map-header {
+  padding:1.25rem 1.5rem;
+  background:var(--navy-deep);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.map-title { font-size:0.95rem; font-weight:700; color:var(--white); }
+.map-live {
+  display:flex; align-items:center; gap:0.5rem;
+  font-size:0.72rem; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+  color:var(--green);
+}
+.live-pulse {
+  width:8px; height:8px; border-radius:50%; background:var(--green);
+  animation:livepulse 2s infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+#trackMap {
+  width:100%; height:380px;
+}
+
+.map-meta {
+  padding:1.25rem 1.5rem;
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:1rem;
+  border-top:1px solid var(--light);
+}
+.meta-item {}
+.meta-label { font-size:0.72rem; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--mid); margin-bottom:0.25rem; }
+.meta-val { font-size:0.9rem; font-weight:700; color:var(--dark); }
+.meta-val.orange { color:var(--orange); }
+
+.map-placeholder {
+  background:var(--light); border-radius:14px;
+  height:420px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1rem;
+  border:2px dashed rgba(11,60,93,0.12);
+  color:var(--mid); text-align:center;
+}
+.map-placeholder p { font-size:1rem; font-weight:600; color:var(--dark); }
+.map-placeholder span { font-size:0.85rem; color:var(--mid); }
+
+/* ── ABOUT ──────────────────────────────────── */
+.about-section { background: var(--light); }
+.about-layout { display:grid; grid-template-columns:1fr 1fr; gap:6rem; align-items:start; }
+
+.about-visual {
+  background: linear-gradient(135deg, var(--navy), var(--navy-deep));
+  border-radius:12px; padding:4rem 3rem;
+  position:relative; overflow:hidden;
+}
+.about-visual::before {
+  content:''; position:absolute; top:-60px; right:-60px;
+  width:250px; height:250px; border-radius:50%;
+  border:40px solid rgba(245,124,0,0.08);
+}
+.about-visual::after {
+  content:''; position:absolute; bottom:-40px; left:-40px;
+  width:180px; height:180px; border-radius:50%;
+  border:30px solid rgba(29,112,162,0.12);
+}
+.av-big {
+  font-family:var(--font-display);
+  font-size:5rem; font-weight:900;
+  color: var(--orange); line-height:1;
+  margin-bottom:0.5rem;
+}
+.av-label { font-size:1rem; color:rgba(255,255,255,0.7); margin-bottom:3rem; }
+
+.cert-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+.cert-item {
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:8px; padding:1rem;
+  color:var(--white); font-size:0.85rem; font-weight:600;
+}
+.cert-item span { display:block; font-size:0.75rem; color:rgba(255,255,255,0.5); font-weight:400; margin-top:0.2rem; }
+
+.about-text { padding-top:1rem; }
+.about-text .section-title { margin-top:0.5rem; }
+.about-text p {
+  font-size:1rem; color:var(--mid); line-height:1.85;
+  margin-bottom:1.25rem;
+}
+
+.values-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-top:2rem; }
+.val-card {
+  background:var(--white); border-radius:8px; padding:1.5rem;
+  border-left:3px solid var(--orange);
+}
+.val-card strong { display:block; font-size:0.95rem; color:var(--dark); margin-bottom:0.3rem; }
+.val-card p { font-size:0.85rem; color:var(--mid); line-height:1.6; }
+
+/* ── CONTACT ──────────────────────────────── */
+.contact-section { background: var(--navy-deep); }
+.contact-layout { display:grid; grid-template-columns:1fr 1fr; gap:6rem; }
+
+.contact-left .section-title { color:var(--white); }
+.contact-left .section-sub { color:rgba(255,255,255,0.5); }
+
+.contact-details { margin-top:3rem; display:flex; flex-direction:column; gap:1.5rem; }
+.cd-item {}
+.cd-label { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--orange); margin-bottom:0.4rem; }
+.cd-value { font-size:1rem; color:var(--white); }
+.cd-value a { color:var(--white); text-decoration:none; }
+.cd-value a:hover { color:var(--orange); }
+
+.wa-btn {
+  display:inline-flex; align-items:center; gap:0.75rem;
+  margin-top:2rem; padding:1rem 2rem;
+  background: #25D366; color:var(--white);
+  border-radius:6px; font-weight:700; text-decoration:none;
+  box-shadow:0 8px 24px rgba(37,211,102,0.25);
+  transition: all 0.25s;
+}
+.wa-btn:hover { background:#1ebe5d; transform:translateY(-2px); }
+
+.contact-form {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px; padding:3rem;
+}
+.contact-form h3 {
+  font-family:var(--font-display); font-size:1.5rem;
+  color:var(--white); margin-bottom:2rem;
+}
+.contact-form .form-group input,
+.contact-form .form-group select,
+.contact-form .form-group textarea {
+  background:rgba(255,255,255,0.06);
+  border-color:rgba(255,255,255,0.12);
+}
+
+/* ── FOOTER ───────────────────────────────── */
+footer {
+  background:var(--navy-deep);
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:4rem 4rem 2rem;
+}
+.footer-inner { max-width:1280px; margin:0 auto; }
+.footer-grid {
+  display:grid; grid-template-columns:2.5fr 1fr 1fr 1fr;
+  gap:3rem; padding-bottom:3rem;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.footer-brand-name {
+  font-family:var(--font-display);
+  font-size:1.3rem; font-weight:700; color:var(--white); margin-bottom:1rem;
+}
+.footer-brand-name span { color:var(--orange); }
+.footer-desc { font-size:0.9rem; color:rgba(255,255,255,0.45); line-height:1.75; margin-bottom:1.5rem; }
+
+.footer-col h4 {
+  font-size:0.78rem; font-weight:700; text-transform:uppercase; letter-spacing:1.5px;
+  color:rgba(255,255,255,0.4); margin-bottom:1.25rem;
+}
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:0.65rem; }
+.footer-col ul a {
+  font-size:0.9rem; color:rgba(255,255,255,0.6); text-decoration:none;
+  transition: color 0.2s;
+}
+.footer-col ul a:hover { color:var(--orange); }
+
+.footer-bottom {
+  display:flex; justify-content:space-between; align-items:center;
+  padding-top:2rem; flex-wrap:wrap; gap:1rem;
+}
+.footer-copy { font-size:0.82rem; color:rgba(255,255,255,0.3); }
+
+/* ── MODAL ──────────────────────────────────── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:2000;
+  background:rgba(7,31,49,0.85);
+  backdrop-filter:blur(8px);
+  display:none; align-items:center; justify-content:center;
+  padding:2rem;
+}
+.modal-overlay.open { display:flex; animation: modalIn 0.3s ease-out; }
+@keyframes modalIn { from{opacity:0;} to{opacity:1;} }
+
+.modal-box {
+  background:var(--white); border-radius:14px; padding:3.5rem;
+  max-width:460px; width:100%; text-align:center;
+  animation: modalBoxIn 0.4s cubic-bezier(.34,1.56,.64,1) both;
+}
+@keyframes modalBoxIn { from{transform:scale(0.85);opacity:0;} to{transform:scale(1);opacity:1;} }
+
+.modal-icon {
+  width:72px; height:72px; border-radius:50%;
+  background:rgba(22,163,74,0.1);
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1.5rem;
+}
+.modal-icon svg { width:36px; height:36px; }
+.modal-box h3 { font-family:var(--font-display); font-size:1.8rem; margin-bottom:0.75rem; }
+.modal-box p { color:var(--mid); line-height:1.7; margin-bottom:2rem; }
+
+/* ── RESPONSIVE ───────────────────────────── */
+@media (max-width: 1100px) {
+  .industries-grid { grid-template-columns:repeat(3,1fr); }
+  .services-layout { grid-template-columns:1fr; }
+  .services-intro { max-width:600px; }
+}
+
+@media (max-width: 900px) {
+  nav { padding:0 1.5rem; }
+  section { padding:5rem 1.5rem; }
+  footer { padding:3rem 1.5rem 1.5rem; }
+  .hero-inner { grid-template-columns:1fr; gap:3rem; padding:4rem 1.5rem; }
+  .hero-stats { grid-template-columns:1fr 1fr; }
+  .services-grid { grid-template-columns:1fr; }
+  .quote-layout { grid-template-columns:1fr; gap:3rem; }
+  .track-layout { grid-template-columns:1fr; gap:3rem; }
+  .about-layout { grid-template-columns:1fr; gap:3rem; }
+  .contact-layout { grid-template-columns:1fr; gap:3rem; }
+  .footer-grid { grid-template-columns:1fr 1fr; }
+  .industries-grid { grid-template-columns:repeat(2,1fr); }
+  .nav-links { display:none; }
+  .hamburger { display:flex; }
+  .map-col { position:static; }
+  .contact-bar-inner { flex-direction:column; }
+  .cb-item { border:none !important; border-bottom:1px solid rgba(255,255,255,0.15) !important; width:100%; justify-content:center; }
+}
+
+@media (max-width: 600px) {
+  .industries-grid { grid-template-columns:1fr 1fr; }
+  .footer-grid { grid-template-columns:1fr; }
+  .form-row { grid-template-columns:1fr; }
+  .hero h1 { font-size:2.4rem; }
+  .hero-stats { grid-template-columns:1fr; }
+  .values-grid { grid-template-columns:1fr; }
+  .cert-grid { grid-template-columns:1fr; }
+  .map-meta { grid-template-columns:1fr 1fr; }
+}
+
+/* ── NAV MOBILE OPEN ─────────────────────── */
+.nav-mobile {
+  display:none; position:absolute;
+  top:72px; left:0; right:0; z-index:998;
+  background:var(--navy-deep);
+  padding:1.5rem;
+  flex-direction:column; gap:1rem;
+  border-bottom:2px solid var(--orange);
+  list-style:none;
+}
+.nav-mobile.open { display:flex; }
+.nav-mobile a {
+  color:rgba(255,255,255,0.85); text-decoration:none;
+  font-size:1rem; font-weight:500; padding:0.5rem 0;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.nav-mobile a:hover { color:var(--orange); }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────── -->
+<nav>
+  <a href="#home" class="nav-logo">
+    <div class="logo-mark"></div>
+    MATAAI NIGERIA LIMITED
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#industries">Industries</a></li>
+    <li><a href="#track">Track</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#quote" class="nav-cta">Get a Quote</a></li>
+  </ul>
+  <button class="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<ul class="nav-mobile" id="navMobile">
+  <li><a href="#services" onclick="closeMobileNav()">Services</a></li>
+  <li><a href="#industries" onclick="closeMobileNav()">Industries</a></li>
+  <li><a href="#track" onclick="closeMobileNav()">Track Shipment</a></li>
+  <li><a href="#about" onclick="closeMobileNav()">About</a></li>
+  <li><a href="#contact" onclick="closeMobileNav()">Contact</a></li>
+  <li><a href="#quote" onclick="closeMobileNav()">Get a Quote</a></li>
+</ul>
+
+<!-- ── HERO ─────────────────────────────────── -->
+<section id="home" style="padding:0;">
+  <div class="hero">
+    <video class="hero-video-bg" autoplay muted loop playsinline preload="auto">
+      <source src="MATAAI.mp4" type="video/mp4">
+    </video>
+    <div class="hero-video-overlay"></div>
+    <div class="hero-bg-lines"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-eyebrow">Nigeria's Trusted Freight Partner</span>
+        <h1>Moving Cargo,<br><em>Connecting</em><br>the World</h1>
+        <p class="hero-desc">MATAAI NIGERIA LIMITED delivers end-to-end freight forwarding, customs clearance, and logistics solutions — from Port Harcourt to every corner of the globe.</p>
+        <div class="hero-actions">
+          <a href="#quote" class="btn btn-orange">Request a Quote</a>
+          <a href="#services" class="btn btn-outline">Explore Services</a>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-num">25+</div>
+          <div class="stat-label">Years in Operation</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">150+</div>
+          <div class="stat-label">Countries Reached</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">50K+</div>
+          <div class="stat-label">Shipments Delivered</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">99.8%</div>
+          <div class="stat-label">On-Time Rate</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT BAR ─────────────────────────── -->
+<div class="contact-bar">
+  <div class="contact-bar-inner">
+    <a href="tel:+2348105348066" class="cb-item">
+      <div>
+        <div class="cb-item-label">Call Us 24/7</div>
+        <div class="cb-item-value">+234 810 534 8066</div>
+      </div>
+    </a>
+    <a href="mailto:info@mataainigeria.com" class="cb-item">
+      <div>
+        <div class="cb-item-label">Email Us</div>
+        <div class="cb-item-value">phcmataaing@gmail.com</div>
+      </div>
+    </a>
+    <a href="https://wa.me/2348105348066" class="cb-item" target="_blank">
+      <div>
+        <div class="cb-item-label">WhatsApp</div>
+        <div class="cb-item-value">+234 810 534 8066</div>
+      </div>
+    </a>
+  </div>
+</div>
+
+<!-- ── SERVICES ─────────────────────────────── -->
+<section id="services" class="services-section">
+  <div class="section-inner">
+    <div class="services-layout">
+      <div class="services-intro">
+        <div class="section-label">What We Do</div>
+        <h2 class="section-title">Comprehensive Logistics Solutions</h2>
+        <p>From the moment your cargo leaves its origin to final delivery, we manage every step with precision, compliance, and care.</p>
+        <a href="#quote" class="btn btn-orange">Request a Quote</a>
+      </div>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="sc-num">01</div>
+          <div class="sc-title">Freight Forwarding</div>
+          <div class="sc-desc">Air, sea, and road freight built around your delivery window and budget.</div>
+          <ul class="sc-features">
+            <li>Air Freight Express</li>
+            <li>Sea Freight — FCL & LCL</li>
+            <li>Road Transport</li>
+            <li>Multimodal Shipping</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="sc-num">02</div>
+          <div class="sc-title">Logistics & Warehousing</div>
+          <div class="sc-desc">Modern storage facilities with full inventory management and distribution.</div>
+          <ul class="sc-features">
+            <li>Inventory Handling</li>
+            <li>Storage Solutions</li>
+            <li>Distribution Networks</li>
+            <li>Pick, Pack & Dispatch</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="sc-num">03</div>
+          <div class="sc-title">Customs Clearance</div>
+          <div class="sc-desc">Fast, compliant clearance for imports and exports through Nigerian ports.</div>
+          <ul class="sc-features">
+            <li>Import & Export Clearance</li>
+            <li>Duty Processing</li>
+            <li>HS Code Classification</li>
+            <li>Regulatory Documentation</li>
+          </ul>
+        </div>
+        <div class="service-card">
+          <div class="sc-num">04</div>
+          <div class="sc-title">Import & Export Docs</div>
+          <div class="sc-desc">Full documentation support to keep your shipments moving without delay.</div>
+          <ul class="sc-features">
+            <li>Bill of Lading</li>
+            <li>Commercial Invoices</li>
+            <li>Certificate of Origin</li>
+            <li>Compliance Paperwork</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── INDUSTRIES ────────────────────────────── -->
+<section id="industries" class="industries-section">
+  <div class="section-inner">
+    <div class="section-label">Who We Serve</div>
+    <h2 class="section-title">Industries We Specialise In</h2>
+    <p class="section-sub">Deep sector knowledge that lets us anticipate challenges before they become delays.</p>
+    <div class="industries-grid">
+      <div class="industry-card">
+        <div class="ic-name">Manufacturing</div>
+        <div class="ic-desc">Just-in-time delivery for production lines, minimising downtime and keeping operations on schedule.</div>
+      </div>
+      <div class="industry-card">
+        <div class="ic-name">Retail & FMCG</div>
+        <div class="ic-desc">High-velocity distribution for consumer goods with tight shelf-date requirements.</div>
+      </div>
+      <div class="industry-card">
+        <div class="ic-name">Agriculture</div>
+        <div class="ic-desc">Temperature-controlled shipping that preserves freshness from farm to international market.</div>
+      </div>
+      <div class="industry-card">
+        <div class="ic-name">Oil & Gas</div>
+        <div class="ic-desc">Specialised handling of hazardous materials, equipment, and project cargo with full compliance.</div>
+      </div>
+      <div class="industry-card">
+        <div class="ic-name">E-commerce</div>
+        <div class="ic-desc">Scalable fulfilment and last-mile delivery solutions for growing online businesses.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── QUOTE ─────────────────────────────────── -->
+<section id="quote" class="quote-section">
+  <div class="section-inner">
+    <div class="quote-layout">
+      <div class="quote-left">
+        <div class="section-label">Get a Quote</div>
+        <h2 class="section-title" style="color:var(--white);">Get Your Freight Quote in Minutes</h2>
+        <p class="section-sub">Tell us about your cargo and we'll get back to you within 24 hours via email and WhatsApp.</p>
+        <div class="quote-steps">
+          <div class="qs-item">
+            <div class="qs-num">01</div>
+            <div class="qs-text">
+              <strong>Your Details</strong>
+              <span>Name, company, and contact information</span>
+            </div>
+          </div>
+          <div class="qs-item">
+            <div class="qs-num">02</div>
+            <div class="qs-text">
+              <strong>Cargo & Route</strong>
+              <span>Type, weight, origin and destination</span>
+            </div>
+          </div>
+          <div class="qs-item">
+            <div class="qs-num">03</div>
+            <div class="qs-text">
+              <strong>Documents</strong>
+              <span>Upload any relevant supporting files</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote-form">
+        <h3>Request a Quote</h3>
+        <div class="stepper">
+          <div class="step-dot active" id="step1">Contact</div>
+          <div class="step-dot" id="step2">Shipment</div>
+          <div class="step-dot" id="step3">Documents</div>
+        </div>
+
+        <!-- Step 1 -->
+        <div class="form-step active" id="formStep1">
+          <div class="form-row">
+            <div class="form-group"><label>Full Name *</label><input type="text" id="qName" placeholder="John Adebayo" required></div>
+            <div class="form-group"><label>Company</label><input type="text" id="qCompany" placeholder="Company Ltd."></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email *</label><input type="email" id="qEmail" placeholder="you@company.com" required></div>
+            <div class="form-group"><label>Phone *</label><input type="tel" id="qPhone" placeholder="+234 800 000 0000" required></div>
+          </div>
+          <div class="form-nav">
+            <div></div>
+            <button class="btn btn-orange" onclick="nextStep(1)">Next — Shipment Details</button>
+          </div>
+        </div>
+
+        <!-- Step 2 -->
+        <div class="form-step" id="formStep2">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Cargo Type *</label>
+              <select id="qCargoType">
+                <option value="">Select type</option>
+                <option>General Cargo</option>
+                <option>Perishable Goods</option>
+                <option>Hazardous Materials</option>
+                <option>Oversized / Heavy Lift</option>
+                <option>Electronics</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Service *</label>
+              <select id="qService">
+                <option value="">Select service</option>
+                <option>Air Freight</option>
+                <option>Sea Freight — FCL</option>
+                <option>Sea Freight — LCL</option>
+                <option>Road Transport</option>
+                <option>Warehousing</option>
+                <option>Customs Clearance</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Origin *</label><input type="text" id="qOrigin" placeholder="Port Harcourt, Nigeria"></div>
+            <div class="form-group"><label>Destination *</label><input type="text" id="qDest" placeholder="Dubai, UAE"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Weight (kg) *</label><input type="number" id="qWeight" placeholder="0"></div>
+            <div class="form-group"><label>Dimensions (L×W×H cm)</label><input type="text" id="qDims" placeholder="120 × 80 × 60"></div>
+          </div>
+          <div class="form-group">
+            <label>Additional Notes</label>
+            <textarea id="qNotes" placeholder="Special handling requirements, preferred timeline, etc."></textarea>
+          </div>
+          <div class="form-nav">
+            <button class="btn btn-ghost" onclick="prevStep(2)">Back</button>
+            <button class="btn btn-orange" onclick="nextStep(2)">Next — Upload Documents</button>
+          </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="form-step" id="formStep3">
+          <div class="upload-zone" id="uploadZone">
+            <input type="file" id="fileUpload" multiple accept=".pdf,.doc,.docx,.jpg,.png">
+            <label for="fileUpload">
+              Drop files here or <strong>click to browse</strong><br>
+              <small style="color:rgba(255,255,255,0.35); font-size:0.8rem;">PDF, DOC, JPG — max 10MB each</small>
+            </label>
+          </div>
+          <div id="fileList" style="margin-bottom:1rem; font-size:0.85rem; color:rgba(255,255,255,0.6);"></div>
+          <div class="form-group">
+            <label>Preferred Response Channel</label>
+            <select id="qChannel">
+              <option value="email">Email</option>
+              <option value="whatsapp">WhatsApp</option>
+              <option value="both">Both</option>
+            </select>
+          </div>
+          <div class="form-nav">
+            <button class="btn btn-ghost" onclick="prevStep(3)">Back</button>
+            <button class="btn btn-orange" onclick="submitQuote()">Submit Quote Request</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRACK ─────────────────────────────────── -->
+<section id="track" class="track-section">
+  <div class="section-inner">
+    <div class="section-label">Live Tracking</div>
+    <h2 class="section-title">Track Your Shipment</h2>
+    <p class="section-sub">Enter your MATAAI tracking number for real-time location and status updates.</p>
+
+    <div class="track-layout">
+      <!-- Timeline -->
+      <div class="track-col">
+        <div class="track-input-group">
+          <input type="text" id="trackInput" placeholder="MNL2026-001234" />
+          <button class="btn btn-orange" onclick="doTrack()">Track Now</button>
+        </div>
+
+        <div id="timelineWrap" style="display:none;">
+          <div class="timeline">
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-header">
+                <div class="tl-status">Order Received</div>
+                <div class="tl-date">28 Jan 2026 — 09:30</div>
+              </div>
+              <div class="tl-desc">Shipment registered and assigned to logistics team at Port Harcourt.</div>
+              <div class="tl-badge badge-done">Completed</div>
+            </div>
+            <div class="tl-item done">
+              <div class="tl-dot"></div>
+              <div class="tl-header">
+                <div class="tl-status">In Transit</div>
+                <div class="tl-date">30 Jan 2026 — 14:15</div>
+              </div>
+              <div class="tl-desc">Departed Port Harcourt facility en route to Lagos Port.</div>
+              <div class="tl-badge badge-done">Completed</div>
+            </div>
+            <div class="tl-item active">
+              <div class="tl-dot"></div>
+              <div class="tl-header">
+                <div class="tl-status">At Port / Customs</div>
+                <div class="tl-date">04 Feb 2026 — 11:00</div>
+              </div>
+              <div class="tl-desc">Currently at Lagos Port. Customs clearance in progress.</div>
+              <div class="tl-badge badge-active">In Progress</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-header">
+                <div class="tl-status">Out for Delivery</div>
+                <div class="tl-date">Est. 08 Feb 2026</div>
+              </div>
+              <div class="tl-desc">Cleared for international dispatch.</div>
+              <div class="tl-badge badge-pending">Pending</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-header">
+                <div class="tl-status">Delivered</div>
+                <div class="tl-date">Est. 11 Feb 2026</div>
+              </div>
+              <div class="tl-desc">Final delivery to consignee in Dubai, UAE.</div>
+              <div class="tl-badge badge-pending">Pending</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Map -->
+      <div class="map-col">
+        <!-- Placeholder shown before tracking -->
+        <div class="map-placeholder" id="mapPlaceholder">
+          <p>Live Map</p>
+          <span>Enter a tracking number above to view your shipment's live location on the map.</span>
+        </div>
+
+        <!-- Map card shown after tracking -->
+        <div class="map-card" id="mapCard">
+          <div class="map-header">
+            <div class="map-title">Shipment Location — MNL2026-001234</div>
+            <div class="map-live"><div class="live-pulse"></div>Live</div>
+          </div>
+          <div id="trackMap"></div>
+          <div class="map-meta">
+            <div class="meta-item">
+              <div class="meta-label">Origin</div>
+              <div class="meta-val">Port Harcourt</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Current</div>
+              <div class="meta-val orange">Lagos Port</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Destination</div>
+              <div class="meta-val">Dubai, UAE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ─────────────────────────────────── -->
+<section id="about" class="about-section">
+  <div class="section-inner">
+    <div class="about-layout">
+      <div class="about-visual">
+        <div class="av-big">25+</div>
+        <div class="av-label">Years of Logistics Excellence</div>
+        <div class="cert-grid">
+          <div class="cert-item">ISO 9001:2015<span>Quality Management</span></div>
+          <div class="cert-item">IATA Certified<span>Air Cargo Agent</span></div>
+          <div class="cert-item">C-TPAT<span>Customs Trade Partnership</span></div>
+          <div class="cert-item">AEO Licensed<span>Authorised Operator</span></div>
+          <div class="cert-item">WCA Member<span>Global Network</span></div>
+          <div class="cert-item">NVOCC<span>Non-Vessel Operating</span></div>
+        </div>
+      </div>
+      <div class="about-text">
+        <div class="section-label">About MATAAI</div>
+        <h2 class="section-title">Built on Trust, Driven by Precision</h2>
+        <p>MATAAI NIGERIA LIMITED was founded with a single purpose: to give Nigerian businesses and global trade partners a logistics company they can truly rely on. From our base in Port Harcourt, we have grown into a nationally recognised freight forwarder with deep expertise across every shipping mode.</p>
+        <p>Our team of certified professionals handles every shipment as if it were their own cargo — with urgency, care, and full regulatory compliance at every stage. We don't just move freight; we build long-term partnerships based on transparency, reliability, and results.</p>
+        <div class="values-grid">
+          <div class="val-card">
+            <strong>Reliability</strong>
+            <p>We deliver on our promises. If it's booked, it moves — on time and in full.</p>
+          </div>
+          <div class="val-card">
+            <strong>Compliance</strong>
+            <p>Every shipment handled in full accordance with Nigerian and international trade regulations.</p>
+          </div>
+          <div class="val-card">
+            <strong>Transparency</strong>
+            <p>Real-time updates and honest communication throughout the entire journey.</p>
+          </div>
+          <div class="val-card">
+            <strong>Excellence</strong>
+            <p>We hold ourselves to the highest standards so your business never has to compromise.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────── -->
+<section id="contact" class="contact-section">
+  <div class="section-inner">
+    <div class="contact-layout">
+      <div class="contact-left">
+        <div class="section-label">Contact Us</div>
+        <h2 class="section-title" style="color:var(--white);">Let's Talk About Your Shipment</h2>
+        <p class="section-sub">Our logistics team is available 24/7 for urgent enquiries and round the clock to plan your next move.</p>
+        <div class="contact-details">
+          <div class="cd-item">
+            <div class="cd-label">Office Address</div>
+            <div class="cd-value">Port Harcourt, Rivers State, Nigeria</div>
+          </div>
+          <div class="cd-item">
+            <div class="cd-label">Phone</div>
+            <div class="cd-value"><a href="tel:+2348105348066">+234 810 534 8066</a></div>
+          </div>
+          <div class="cd-item">
+            <div class="cd-label">Email</div>
+            <div class="cd-value"><a href="mailto:phcmataaing@gmail.com">phcmataaing@gmail.com</a></div>
+          </div>
+          <div class="cd-item">
+            <div class="cd-label">Business Hours</div>
+            <div class="cd-value">Monday – Friday, 8:00 AM – 10:00 PM</div>
+          </div>
+        </div>
+        <a href="https://wa.me/2348105348066" class="wa-btn" target="_blank">
+          Chat on WhatsApp
+        </a>
+      </div>
+      <div class="contact-form">
+        <h3>Send a Message</h3>
+        <div class="form-group"><label>Full Name</label><input type="text" placeholder="Your name"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Email</label><input type="email" placeholder="you@email.com"></div>
+          <div class="form-group"><label>Phone</label><input type="tel" placeholder="+234 ..."></div>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select>
+            <option>General Enquiry</option>
+            <option>Quote Request</option>
+            <option>Shipment Issue</option>
+            <option>Partnership</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Message</label><textarea rows="5" placeholder="How can we help you?"></textarea></div>
+        <button class="btn btn-orange" style="width:100%;" onclick="sendMessage()">Send Message</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">MATAAI <span>NIGERIA</span> LIMITED</div>
+        <p class="footer-desc">Your trusted freight forwarding and logistics partner, moving cargo reliably from Nigeria to the world.</p>
+        <p class="footer-desc" style="font-size:0.8rem;">Port Harcourt, Rivers State, Nigeria<br>phcmataaing@gmail.com · +234 810 534 8066</p>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Air Freight</a></li>
+          <li><a href="#services">Sea Freight</a></li>
+          <li><a href="#services">Road Transport</a></li>
+          <li><a href="#services">Warehousing</a></li>
+          <li><a href="#services">Customs Clearance</a></li>
+          <li><a href="#services">Documentation</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Industries</h4>
+        <ul>
+          <li><a href="#industries">Manufacturing</a></li>
+          <li><a href="#industries">Retail & FMCG</a></li>
+          <li><a href="#industries">Agriculture</a></li>
+          <li><a href="#industries">Oil & Gas</a></li>
+          <li><a href="#industries">E-commerce</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#about">Certifications</a></li>
+          <li><a href="#quote">Request a Quote</a></li>
+          <li><a href="#track">Track Shipment</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-copy">&copy; 2026 MATAAI NIGERIA LIMITED. All rights reserved.</div>
+      <div class="footer-copy">Privacy Policy &nbsp;·&nbsp; Terms of Service</div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── SUCCESS MODAL ───────────────────────── -->
+<div class="modal-overlay" id="successModal" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-icon">
+      <svg fill="none" viewBox="0 0 24 24" stroke="#16A34A" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+    <h3>Request Submitted!</h3>
+    <p>Thank you for reaching out to MATAAI NIGERIA LIMITED. Our team will review your details and respond within 24 hours via your preferred channel.</p>
+    <button class="btn btn-orange" style="width:100%;" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script>
+// ── MOBILE NAV ────────────────────────────
+function toggleMobileNav() {
+  document.getElementById('navMobile').classList.toggle('open');
+}
+function closeMobileNav() {
+  document.getElementById('navMobile').classList.remove('open');
+}
+
+// ── MULTI-STEP QUOTE FORM ──────────────────
+function nextStep(current) {
+  if (current === 1) {
+    const name = document.getElementById('qName').value.trim();
+    const email = document.getElementById('qEmail').value.trim();
+    const phone = document.getElementById('qPhone').value.trim();
+    if (!name || !email || !phone) {
+      alert('Please fill in all required fields.');
+      return;
+    }
+  }
+  if (current === 2) {
+    const origin = document.getElementById('qOrigin').value.trim();
+    const dest = document.getElementById('qDest').value.trim();
+    const weight = document.getElementById('qWeight').value.trim();
+    if (!origin || !dest || !weight) {
+      alert('Please fill in origin, destination, and weight.');
+      return;
+    }
+  }
+  document.getElementById('formStep' + current).classList.remove('active');
+  document.getElementById('formStep' + (current + 1)).classList.add('active');
+  document.getElementById('step' + current).classList.remove('active');
+  document.getElementById('step' + current).classList.add('done');
+  document.getElementById('step' + (current + 1)).classList.add('active');
+}
+
+function prevStep(current) {
+  document.getElementById('formStep' + current).classList.remove('active');
+  document.getElementById('formStep' + (current - 1)).classList.add('active');
+  document.getElementById('step' + current).classList.remove('active');
+  document.getElementById('step' + (current - 1)).classList.remove('done');
+  document.getElementById('step' + (current - 1)).classList.add('active');
+}
+
+function submitQuote() {
+  document.getElementById('successModal').classList.add('open');
+  // Reset form
+  ['formStep1','formStep2','formStep3'].forEach((id, i) => {
+    document.getElementById(id).classList.remove('active');
+    document.getElementById('step' + (i+1)).classList.remove('active','done');
+  });
+  document.getElementById('formStep1').classList.add('active');
+  document.getElementById('step1').classList.add('active');
+}
+
+function sendMessage() {
+  document.getElementById('successModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('successModal').classList.remove('open');
+}
+
+// File upload label update
+document.getElementById('fileUpload').addEventListener('change', function() {
+  const list = document.getElementById('fileList');
+  if (this.files.length > 0) {
+    list.innerHTML = Array.from(this.files).map(f => '— ' + f.name).join('<br>');
+  }
+});
+
+// ── LIVE MAP TRACKING ─────────────────────
+let trackMap = null;
+let shipMarker = null;
+
+function doTrack() {
+  const val = document.getElementById('trackInput').value.trim();
+  if (!val) {
+    alert('Please enter a tracking number.');
+    return;
+  }
+
+  // Show timeline
+  document.getElementById('timelineWrap').style.display = 'block';
+
+  // Show map card, hide placeholder
+  document.getElementById('mapPlaceholder').style.display = 'none';
+  const mapCard = document.getElementById('mapCard');
+  mapCard.classList.add('visible');
+
+  // Init map only once
+  if (!trackMap) {
+    setTimeout(buildMap, 150);
+  } else {
+    trackMap.invalidateSize();
+  }
+
+  // Scroll to map
+  setTimeout(() => {
+    mapCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 350);
+}
+
+function buildMap() {
+  // Coordinates
+  const PH     = [4.8156, 7.0498];   // Port Harcourt
+  const LAGOS  = [6.4281, 3.4219];   // Lagos
+  const DUBAI  = [25.2048, 55.2708]; // Dubai
+
+  // Create map
+  trackMap = L.map('trackMap', { zoomControl: true, scrollWheelZoom: false });
+
+  // Tile layer
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 19
+  }).addTo(trackMap);
+
+  // Helper to make clean circle markers
+  function makePin(color, size) {
+    return L.divIcon({
+      className: '',
+      iconSize: [size, size],
+      iconAnchor: [size/2, size/2],
+      html: `<div style="
+        width:${size}px; height:${size}px;
+        background:${color};
+        border-radius:50%;
+        border:3px solid #ffffff;
+        box-shadow:0 3px 12px rgba(0,0,0,0.25);
+      "></div>`
+    });
+  }
+
+  function makePulsePin(color) {
+    return L.divIcon({
+      className: '',
+      iconSize: [48, 48],
+      iconAnchor: [24, 24],
+      html: `
+        <div style="position:relative;width:48px;height:48px;display:flex;align-items:center;justify-content:center;">
+          <div style="
+            position:absolute; width:48px; height:48px; border-radius:50%;
+            background:${color}; opacity:0.2;
+            animation:ripple 2s infinite;
+          "></div>
+          <div style="
+            width:20px; height:20px; border-radius:50%;
+            background:${color};
+            border:3px solid white;
+            box-shadow:0 3px 10px rgba(0,0,0,0.3);
+            position:relative; z-index:1;
+          "></div>
+        </div>
+        <style>
+          @keyframes ripple {
+            0% { transform:scale(1); opacity:0.3; }
+            100% { transform:scale(2.2); opacity:0; }
+          }
+        </style>`
+    });
+  }
+
+  // Origin marker
+  L.marker(PH, { icon: makePin('#16A34A', 16) }).addTo(trackMap)
+    .bindPopup('<b style="color:#16A34A">Origin</b><br>Port Harcourt, Nigeria<br><small>Departed: 28 Jan 2026</small>');
+
+  // Current position (pulsing)
+  shipMarker = L.marker(LAGOS, { icon: makePulsePin('#F57C00') }).addTo(trackMap)
+    .bindPopup('<b style="color:#F57C00">Current Position</b><br>Lagos Port, Nigeria<br><small>At Customs — 04 Feb 2026</small>');
+
+  // Destination marker
+  L.marker(DUBAI, { icon: makePin('#1D70A2', 16) }).addTo(trackMap)
+    .bindPopup('<b style="color:#1D70A2">Destination</b><br>Dubai, UAE<br><small>ETA: 11 Feb 2026</small>');
+
+  // Completed route — solid line
+  L.polyline([PH, LAGOS], {
+    color: '#16A34A',
+    weight: 4,
+    opacity: 0.85
+  }).addTo(trackMap);
+
+  // Remaining route — dashed line
+  L.polyline([LAGOS, DUBAI], {
+    color: '#9CA3AF',
+    weight: 3,
+    opacity: 0.6,
+    dashArray: '10 8'
+  }).addTo(trackMap);
+
+  // Fit all markers on screen
+  const allBounds = L.latLngBounds([PH, LAGOS, DUBAI]);
+  trackMap.fitBounds(allBounds, { padding: [40, 40] });
+
+  // Subtle live animation — gently shifts the ship marker
+  let t = 0;
+  setInterval(() => {
+    if (!shipMarker) return;
+    t += 0.08;
+    shipMarker.setLatLng([
+      LAGOS[0] + Math.sin(t) * 0.012,
+      LAGOS[1] + Math.cos(t * 0.7) * 0.008
+    ]);
+  }, 1800);
+}
+</script>
+</body>
+https://vocal-travesseiro-4c1365.netlify.app/
+</html>
